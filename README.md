@@ -7,7 +7,7 @@ Course project for Big Data Systems using the Piraeus AIS dataset.
 - Paper: [The Piraeus AIS dataset for large-scale maritime data analytics](https://www.sciencedirect.com/science/article/pii/S2352340921010568)
 
 ## Current status
-- Active phase: HDFS-only prototype (Dockerized, no volumes).
+- Active phase: HDFS-only prototype (Dockerized, no persistent volumes).
 - Spark phase is not started yet.
 
 ## Documentation

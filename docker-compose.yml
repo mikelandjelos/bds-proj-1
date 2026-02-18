@@ -6,6 +6,11 @@ services:
     ports:
       - "9870:9870"
       - "9000:9000"
+    volumes:
+      - type: bind
+        source: ../dataset/5792100/unipi_ais_dynamic_2018
+        target: /input/unipi_ais_dynamic_2018
+        read_only: true
     env_file:
       - ./docker/hdfs/hadoop.env
     environment:

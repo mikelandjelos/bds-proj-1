@@ -15,7 +15,7 @@ Deliver the course project in strict, approved steps:
 
 - Do not continue to the next phase until approved.
 - Prototype-first: infrastructure and data path must work before Spark logic.
-- Current prototype phase uses Docker without volumes.
+- Current prototype phase uses no persistent volumes (read-only input bind mount is allowed).
 
 ## Phase plan
 

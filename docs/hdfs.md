@@ -2,6 +2,16 @@
 
 This step brings up only HDFS (NameNode + DataNode), then verifies upload/query.
 Current prototype runs without Docker volumes, so HDFS data is ephemeral.
+Dataset input is mounted into `namenode` as read-only bind mount.
+
+## Fast path (script)
+
+```bash
+automation/hdfs_upload.sh
+```
+
+This does: start HDFS -> wait for readiness -> upload Jul/Dec 2018 from read-only mount -> verify.
+It performs a clean restart first (`docker compose down`).
 
 ## 1) Start HDFS
 
@@ -65,11 +75,8 @@ Suggested subset:
 Upload commands:
 
 ```bash
-docker cp ../dataset/5792100/unipi_ais_dynamic_2018/unipi_ais_dynamic_jul2018.csv bds-namenode:/tmp/jul2018.csv
-docker cp ../dataset/5792100/unipi_ais_dynamic_2018/unipi_ais_dynamic_dec2018.csv bds-namenode:/tmp/dec2018.csv
-
-docker compose exec namenode hdfs dfs -put -f /tmp/jul2018.csv /bds/proj1/raw/jul2018.csv
-docker compose exec namenode hdfs dfs -put -f /tmp/dec2018.csv /bds/proj1/raw/dec2018.csv
+docker compose exec namenode hdfs dfs -put -f /input/unipi_ais_dynamic_2018/unipi_ais_dynamic_jul2018.csv /bds/proj1/raw/jul2018.csv
+docker compose exec namenode hdfs dfs -put -f /input/unipi_ais_dynamic_2018/unipi_ais_dynamic_dec2018.csv /bds/proj1/raw/dec2018.csv
 
 docker compose exec namenode hdfs dfs -ls -h /bds/proj1/raw
 docker compose exec namenode hdfs dfs -count -h /bds/proj1/raw
