@@ -1,61 +1,50 @@
 # Project strategy (atomic execution)
 
 ## Goal
+Deliver the course project in strict, approved phases:
 
-Deliver the course project in strict, approved steps:
-
-1. Prepare ~1GB dataset subset
-2. Place data on HDFS
-3. Build Spark CLI analytics app (argument-driven)
-4. Compare execution modes on same HDFS source:
-   - `--master local[*]`
-   - `--master spark://...` (Docker cluster)
+1. Prepare ~1GB subset and place it on HDFS
+2. Build Spark analytics app with CLI-driven operations
+3. Compare `local[*]` vs Docker Spark cluster on same HDFS source
 
 ## Working agreement
+- Execute one atomic step at a time.
+- Do not continue without explicit approval.
+- Keep `README.md` short; details go into `docs/`.
 
-- Do not continue to the next phase until approved.
-- Prototype-first: infrastructure and data path must work before Spark logic.
-- Current prototype phase uses no persistent volumes (read-only input bind mount is allowed).
+## Architecture decision
+We are steering toward a 3-layer architecture:
+
+1. HDFS layer (storage/persistence)
+2. Spark layer (master/workers compute)
+3. App layer (jobs, CLI/API orchestration)
+
+Preprocessing is an App-layer job (submitted to Spark, reading/writing HDFS).
 
 ## Phase plan
 
-### Phase 1 (active): HDFS only
+### Phase 1 (completed)
+HDFS bring-up, upload, verification.
 
-Scope:
+### Phase 2 (active)
+Preprocess and reformat raw CSV into:
+- `processed/clean`
+- `processed/quarantine`
+- `processed/quality_report`
 
-- bring up HDFS (NameNode + DataNode) with Docker Compose
-- verify health
-- upload/query sample and target subset files
-- verify restart behavior
+### Phase 3 (active)
+Layered infra alignment:
+- HDFS persistence layer finalized
+- Spark cluster layer added
+- App layer container submission flow finalized (next)
 
-Definition of done:
+### Phase 4 (pending)
+Analytics app features:
+- filtering/sorting/counting/display
+- grouped min/max/mean/stddev
 
-- `docker compose ps` healthy
-- `hdfs dfsadmin -report` shows live DataNode(s)
-- file upload works (`hdfs dfs -put`)
-- file query works (`hdfs dfs -ls`, `hdfs dfs -cat`, `hdfs dfs -count`)
-
-### Phase 2 (pending): Dataset preparation for target subset
-
-Scope:
-
-- select initial ~1GB subset (Jul+Dec 2018)
-- perform required cleaning/reformatting
-- upload final prepared subset to HDFS path used in later phases
-
-### Phase 3 (pending): Spark application
-
-Scope:
-
-- CLI operations: filtering, sorting, counting, display
-- grouped statistics: min/max/mean/stddev and similar
-- input must be HDFS URI only
-
-### Phase 4 (pending): Performance comparison
-
-Scope:
-
-- same app, same code, same HDFS input
-- run A: local mode (`local[*]`)
-- run B: Docker Spark cluster mode (`spark://...`)
-- repeated runs + side-by-side metrics
+### Phase 5 (pending)
+Performance comparison:
+- same app + same HDFS data
+- `local[*]` vs `spark://...`
+- repeated runs and side-by-side metrics
