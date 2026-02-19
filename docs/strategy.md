@@ -13,6 +13,8 @@ Deliver the course project in strict, approved phases:
 - Execute one atomic step at a time.
 - Do not continue without explicit approval.
 - Keep `README.md` short; details go into `docs/`.
+- After each completed/approved phase, create one reproducibility checkpoint script in `automation/phase<N>_<semantic_name>.sh`.
+- Create phase checkpoint scripts only after implementation works and phase docs are updated.
 
 ## Architecture decision
 

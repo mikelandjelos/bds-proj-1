@@ -16,6 +16,16 @@ These rules apply only to this repository: `proj-1`.
 - Do not continue to the next phase without explicit user approval.
 - Prefer implementing and verifying one concrete deliverable per step.
 
+## Reproducibility checkpoint policy
+
+- After each phase is fully completed and approved, create exactly one checkpoint script in `automation/`.
+- Script naming convention: `phase<N>_<semantic_name>.sh` (for example `phase2_preprocessing.sh`).
+- A phase checkpoint script is created only when:
+  - implementation for that phase is working,
+  - verification commands pass,
+  - documentation is updated for that phase.
+- The script must reproduce the completed phase state without requiring users to remember long command sequences.
+
 ## Infrastructure rules
 
 - Infrastructure must be Docker-first.

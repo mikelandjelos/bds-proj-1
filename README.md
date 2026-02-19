@@ -26,3 +26,11 @@ Preprocessing is defined as an App-layer job submitted to Spark and reading/writ
 - Spark layer workflow: `docs/spark-layer.md`
 - Preprocessing workflow: `docs/preprocessing.md`
 - Atomic execution plan: `docs/strategy.md`
+
+## Reproducibility checkpoints
+
+After each completed and approved phase, a checkpoint script is added under `automation/` as:
+
+- `phase<N>_<semantic_name>.sh` (example: `phase1_hdfs_upload.sh`)
+
+These scripts are created only after the phase is verified and docs are updated.

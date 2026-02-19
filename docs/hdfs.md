@@ -7,7 +7,7 @@ Dataset input is mounted into `namenode` as read-only bind mount.
 ## Fast path (script)
 
 ```bash
-automation/hdfs_upload.sh
+automation/phase1_hdfs_upload.sh
 ```
 
 This does: start HDFS -> wait for readiness -> upload Jul/Dec 2018 from read-only mount -> verify.
