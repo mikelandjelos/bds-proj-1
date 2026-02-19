@@ -27,7 +27,7 @@ docker compose ps
 
 NameNode UI (HDFS web):
 
-- http://localhost:9870
+- `http://localhost:9870`
 
 ## 2) Verify HDFS is reachable
 
