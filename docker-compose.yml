@@ -68,26 +68,3 @@ services:
       SPARK_WORKER_MEMORY: 2g
     depends_on:
       - spark-master
-
-  spark-preprocess:
-    image: bde2020/spark-master:3.3.0-hadoop3.3
-    depends_on:
-      - namenode
-      - datanode
-    volumes:
-      - type: bind
-        source: .
-        target: /workspace
-    working_dir: /workspace
-    entrypoint:
-      - spark-submit
-      - --master
-      - local[*]
-      - /workspace/scripts/preprocess_ais_hdfs.py
-    command:
-      - --input
-      - hdfs://namenode:9000/bds/proj1/raw/*.csv
-      - --output-base
-      - hdfs://namenode:9000/bds/proj1/processed
-      - --exclude-file-regex
-      - .*sample.*

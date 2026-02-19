@@ -14,19 +14,11 @@ Execution intent:
 2. Spark executes transformations
 3. HDFS is the only data source/sink
 
-Current implementation uses a compose-invoked Spark submit path as transitional wiring.
+## Script kept for app-layer integration
 
-## Current run command
+- `scripts/preprocess_ais_hdfs.py`
 
-```bash
-automation/hdfs_preprocess.sh
-```
-
-Equivalent manual command:
-
-```bash
-docker compose run --rm spark-preprocess
-```
+This script is intentionally framework-agnostic and ready to be called by the upcoming app layer via `spark-submit`.
 
 ## Transformations
 
