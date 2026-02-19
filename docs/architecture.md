@@ -21,6 +21,7 @@
 ### 3) App layer
 
 - Services: project app container(s)
+- Compose service: `app`
 - Responsibility: pipeline/job orchestration (CLI/API)
 - Submits Spark jobs to cluster
 - Owns job entrypoints:

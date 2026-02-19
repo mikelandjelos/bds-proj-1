@@ -14,11 +14,15 @@ Execution intent:
 2. Spark executes transformations
 3. HDFS is the only data source/sink
 
-## Script kept for app-layer integration
+## Script used by app layer
 
 - `scripts/preprocess_ais_hdfs.py`
 
-This script is intentionally framework-agnostic and ready to be called by the upcoming app layer via `spark-submit`.
+This script is called from the app container with `/spark/bin/spark-submit`.
+
+Checkpoint script:
+
+- `automation/phase2_preprocessing.sh`
 
 ## Transformations
 

@@ -32,7 +32,7 @@ Preprocessing is an App-layer job (submitted to Spark, reading/writing HDFS).
 
 HDFS bring-up, upload, verification.
 
-### Phase 2 (active)
+### Phase 2 (completed)
 
 Preprocess and reformat raw CSV into:
 
@@ -40,15 +40,15 @@ Preprocess and reformat raw CSV into:
 - `processed/quarantine`
 - `processed/quality_report`
 
-### Phase 3 (active)
+### Phase 3 (completed)
 
 Layered infra alignment:
 
 - HDFS persistence layer finalized
 - Spark cluster layer added
-- App layer container submission flow finalized (next)
+- App layer container submission flow finalized
 
-### Phase 4 (pending)
+### Phase 4 (next)
 
 Analytics app features:
 
@@ -62,3 +62,8 @@ Performance comparison:
 - same app + same HDFS data
 - `local[*]` vs `spark://...`
 - repeated runs and side-by-side metrics
+
+## Checkpoints
+
+- Phase 1: `automation/phase1_hdfs_upload.sh`
+- Phase 2: `automation/phase2_preprocessing.sh`

@@ -68,3 +68,23 @@ services:
       SPARK_WORKER_MEMORY: 2g
     depends_on:
       - spark-master
+
+  app:
+    image: bde2020/spark-master:3.3.0-hadoop3.3
+    container_name: bds-app
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: .
+        target: /workspace
+    working_dir: /workspace
+    entrypoint: ["sleep", "infinity"]
+    environment:
+      SPARK_MASTER_URL: spark://spark-master:7077
+      HDFS_URL: hdfs://namenode:9000
+    depends_on:
+      - namenode
+      - datanode
+      - spark-master
+      - spark-worker-1
+      - spark-worker-2

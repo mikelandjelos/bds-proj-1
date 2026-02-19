@@ -34,7 +34,11 @@ def parse_args() -> argparse.Namespace:
         default="hdfs://namenode:9000/bds/proj1/processed",
         help="Output base path",
     )
-    parser.add_argument("--master", default="local[*]", help="Spark master URL")
+    parser.add_argument(
+        "--master",
+        default=None,
+        help="Optional Spark master override (normally set via spark-submit --master)",
+    )
     parser.add_argument("--mode", default="overwrite", choices=["overwrite", "append", "ignore", "error"])
     parser.add_argument("--shuffle-partitions", type=int, default=200)
     parser.add_argument(
@@ -46,12 +50,12 @@ def parse_args() -> argparse.Namespace:
 
 
 def build_spark(args: argparse.Namespace) -> SparkSession:
-    spark = (
-        SparkSession.builder.appName("bds-proj1-preprocess-hdfs")
-        .master(args.master)
-        .config("spark.sql.shuffle.partitions", str(args.shuffle_partitions))
-        .getOrCreate()
+    builder = SparkSession.builder.appName("bds-proj1-preprocess-hdfs").config(
+        "spark.sql.shuffle.partitions", str(args.shuffle_partitions)
     )
+    if args.master:
+        builder = builder.master(args.master)
+    spark = builder.getOrCreate()
     spark.sparkContext.setLogLevel("WARN")
     return spark
 
@@ -120,7 +124,7 @@ def main() -> None:
             F.when(F.col("invalid_geo"), F.lit("invalid_geo")),
             F.when(F.col("duplicate_row"), F.lit("duplicate_row")),
         ),
-        F.lit(None),
+        None,
     )
 
     df = (

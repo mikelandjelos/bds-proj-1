@@ -16,14 +16,17 @@ Target architecture is a 3-layer model:
 Preprocessing is defined as an App-layer job submitted to Spark and reading/writing HDFS.
 
 ## Current status
-- Active step: Spark layer infrastructure bring-up (master + workers).
-- Spark analytics/API phase is not started yet.
+- Phase 1 completed: HDFS upload flow is verified.
+- Phase 2 completed: preprocessing writes Parquet outputs to HDFS via Spark.
+- Phase 3 completed: layered HDFS + Spark + App submission flow is verified.
+- Next step (not started): analytics app CLI features.
 
 ## Documentation
 
 - Architecture: `docs/architecture.md`
 - HDFS workflow: `docs/hdfs.md`
 - Spark layer workflow: `docs/spark-layer.md`
+- App layer workflow: `docs/app-layer.md`
 - Preprocessing workflow: `docs/preprocessing.md`
 - Atomic execution plan: `docs/strategy.md`
 
@@ -32,5 +35,6 @@ Preprocessing is defined as an App-layer job submitted to Spark and reading/writ
 After each completed and approved phase, a checkpoint script is added under `automation/` as:
 
 - `phase<N>_<semantic_name>.sh` (example: `phase1_hdfs_upload.sh`)
+- current checkpoints: `phase1_hdfs_upload.sh`, `phase2_preprocessing.sh`
 
 These scripts are created only after the phase is verified and docs are updated.
