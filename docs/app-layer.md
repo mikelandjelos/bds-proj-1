@@ -31,7 +31,7 @@ docker compose exec app /spark/bin/spark-submit \
   --exclude-file-regex '.*sample.*'
 ```
 
-## Submit analytics CLI job (Phase 4 step 1)
+## Submit analytics CLI job (Phase 4)
 
 Count example:
 
@@ -57,6 +57,21 @@ docker compose exec app /spark/bin/spark-submit \
   --sort-by timestamp \
   --sort-desc \
   --limit 10
+```
+
+Grouped stats example:
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  stats \
+  --year 2018 \
+  --group-by month \
+  --metrics speed \
+  --order-by records \
+  --order-desc \
+  --limit 12
 ```
 
 ## Verify output

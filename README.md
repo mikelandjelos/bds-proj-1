@@ -22,8 +22,8 @@ Preprocessing is defined as an App-layer job submitted to Spark and reading/writ
 - Phase 1 completed: HDFS upload flow is verified.
 - Phase 2 completed: preprocessing writes Parquet outputs to HDFS via Spark.
 - Phase 3 completed: layered HDFS + Spark + App submission flow is verified.
-- Phase 4 step 1 completed: analytics CLI foundation (`count`, `show`, filter + sort).
-- Phase 4 step 2 pending: grouped statistics (`min/max/mean/stddev by group`).
+- Phase 4 completed: analytics CLI supports `count`, `show`, and grouped statistics (`min/max/avg/stddev` by group).
+- Next step (not started): performance comparison (`local[*]` vs `spark://...`) on same HDFS input.
 
 ## Documentation
 
@@ -40,6 +40,6 @@ Preprocessing is defined as an App-layer job submitted to Spark and reading/writ
 After each completed and approved phase, a checkpoint script is added under `automation/` as:
 
 - `phase<N>_<semantic_name>.sh` (example: `phase1_hdfs_upload.sh`)
-- current checkpoints: `phase1_hdfs_upload.sh`, `phase2_preprocessing.sh`
+- current checkpoints: `phase1_hdfs_upload.sh`, `phase2_preprocessing.sh`, `phase4_analytics_cli.sh`
 
 These scripts are created only after the phase is verified and docs are updated.

@@ -1,4 +1,4 @@
-# Phase 4 (step 1): Analytics CLI reference
+# Phase 4: Analytics CLI reference
 
 This document is the full reference for the current analytics CLI.
 
@@ -14,12 +14,10 @@ Current scope:
 
 - `count` command
 - `show` command
-- filtering support for both commands
+- `stats` command
+- filtering support for all commands
 - optional sorting and projection for `show`
-
-Not in this step:
-
-- grouped statistics (`min/max/mean/stddev by group`)
+- grouped statistics (`count/min/max/avg/stddev`) by selected group columns
 
 ## Prerequisites
 
@@ -42,24 +40,25 @@ docker compose exec app /spark/bin/spark-submit \
 CLI structure:
 
 ```text
-ais_analytics.py [global options] {count|show} [command options]
+ais_analytics.py [global options] {count|show|stats} [command options]
 ```
 
 Commands:
 
 - `count`: prints one integer (row count after filters)
 - `show`: displays rows after filters
+- `stats`: displays grouped statistics after filters
 
 ## Global options
 
 | Option | Type | Default | Meaning |
 |---|---|---|---|
-| `--app-name` | string | `bds-proj1-analytics-step1` | Spark application name in Spark UI |
+| `--app-name` | string | `bds-proj1-analytics` | Spark application name in Spark UI |
 | `--input` | string | `hdfs://namenode:9000/bds/proj1/processed/clean` | Input parquet path |
 | `--master` | string | unset | Optional Spark master override (normally use `spark-submit --master`) |
 | `--shuffle-partitions` | int | `200` | Spark SQL shuffle partitions |
 
-## Shared filter options (`count` and `show`)
+## Shared filter options (`count`, `show`, `stats`)
 
 | Option | Type | Meaning |
 |---|---|---|
@@ -135,6 +134,61 @@ docker compose exec app /spark/bin/spark-submit \
   --sort-by timestamp \
   --sort-desc \
   --limit 10
+```
+
+## `stats` command
+
+Syntax:
+
+```text
+ais_analytics.py [global options] stats [shared filter options] --group-by <cols> [stats options]
+```
+
+Stats-specific options:
+
+| Option | Type | Default | Meaning |
+|---|---|---|---|
+| `--group-by` | CSV string | required | grouping columns |
+| `--metrics` | CSV string | `speed` | numeric columns to aggregate |
+| `--order-by` | string | unset | output order-by column |
+| `--order-desc` | flag | false | descending order |
+| `--limit` | int | `50` | number of groups to display |
+
+Computed output columns:
+
+- `records`
+- for each metric `m` in `--metrics`:
+  - `m_min`
+  - `m_max`
+  - `m_avg`
+  - `m_stddev` (population stddev)
+
+Example (month-level speed stats):
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  stats \
+  --year 2018 \
+  --group-by month \
+  --metrics speed \
+  --order-by records \
+  --order-desc \
+  --limit 12
+```
+
+Example (year+month speed/course stats):
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  stats \
+  --group-by year,month \
+  --metrics speed,course \
+  --order-by year \
+  --limit 24
 ```
 
 ## Copy-paste query examples
@@ -319,6 +373,21 @@ docker compose exec app /spark/bin/spark-submit \
   --limit 25
 ```
 
+11. Grouped speed stats by month:
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  stats \
+  --year 2018 \
+  --group-by month \
+  --metrics speed \
+  --order-by records \
+  --order-desc \
+  --limit 12
+```
+
 ## Query cookbook (report-oriented set)
 
 Use these labels directly in your report text.
@@ -428,6 +497,21 @@ docker compose exec app /spark/bin/spark-submit \
   --limit 20
 ```
 
+Query I. Monthly grouped speed statistics
+Purpose: provide aggregation table for discussion/visualization.
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  stats \
+  --year 2018 \
+  --group-by month \
+  --metrics speed \
+  --order-by month \
+  --limit 12
+```
+
 ## Error behavior and troubleshooting
 
 Unknown or missing columns:
@@ -473,4 +557,10 @@ docker compose exec app /spark/bin/spark-submit \
 docker compose exec app /spark/bin/spark-submit \
   --master spark://spark-master:7077 \
   /workspace/scripts/ais_analytics.py show --help
+```
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py stats --help
 ```

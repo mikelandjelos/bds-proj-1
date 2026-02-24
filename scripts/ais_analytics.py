@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Phase 4 step 1: basic analytics CLI over processed AIS data in HDFS."""
+"""Phase 4: analytics CLI over processed AIS data in HDFS."""
 
 from __future__ import annotations
 
@@ -32,7 +32,7 @@ def add_filter_args(parser: argparse.ArgumentParser) -> None:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--app-name", default="bds-proj1-analytics-step1")
+    parser.add_argument("--app-name", default="bds-proj1-analytics")
     parser.add_argument(
         "--input",
         default="hdfs://namenode:9000/bds/proj1/processed/clean",
@@ -60,6 +60,22 @@ def parse_args() -> argparse.Namespace:
     show_parser.add_argument("--sort-by", help="Column to sort by")
     show_parser.add_argument("--sort-desc", action="store_true", help="Sort descending")
     show_parser.add_argument("--limit", type=int, default=20, help="Maximum rows to display")
+
+    stats_parser = subparsers.add_parser("stats", help="Grouped statistics after filters")
+    add_filter_args(stats_parser)
+    stats_parser.add_argument(
+        "--group-by",
+        required=True,
+        help="Comma-separated grouping columns (example: year,month)",
+    )
+    stats_parser.add_argument(
+        "--metrics",
+        default="speed",
+        help="Comma-separated numeric columns for stats (example: speed,course)",
+    )
+    stats_parser.add_argument("--order-by", help="Optional output order-by column")
+    stats_parser.add_argument("--order-desc", action="store_true", help="Order descending")
+    stats_parser.add_argument("--limit", type=int, default=50, help="Maximum groups to display")
 
     return parser.parse_args()
 
@@ -135,6 +151,32 @@ def run_show(df: DataFrame, args: argparse.Namespace) -> None:
     df.show(args.limit, truncate=False)
 
 
+def run_stats(df: DataFrame, args: argparse.Namespace) -> None:
+    group_by = csv_columns(args.group_by)
+    metrics = csv_columns(args.metrics)
+    require_columns(df, group_by + metrics)
+
+    aggregations = [F.count(F.lit(1)).alias("records")]
+    for metric in metrics:
+        aggregations.extend(
+            [
+                F.min(metric).alias(f"{metric}_min"),
+                F.max(metric).alias(f"{metric}_max"),
+                F.avg(metric).alias(f"{metric}_avg"),
+                F.stddev_pop(metric).alias(f"{metric}_stddev"),
+            ]
+        )
+
+    out = df.groupBy(*group_by).agg(*aggregations)
+
+    if args.order_by:
+        require_columns(out, [args.order_by])
+        order_expr = F.desc(args.order_by) if args.order_desc else F.asc(args.order_by)
+        out = out.orderBy(order_expr)
+
+    out.show(args.limit, truncate=False)
+
+
 def main() -> None:
     args = parse_args()
     spark = build_spark(args)
@@ -145,8 +187,12 @@ def main() -> None:
 
         if args.command == "count":
             run_count(df)
-        else:
+        elif args.command == "show":
             run_show(df, args)
+        elif args.command == "stats":
+            run_stats(df, args)
+        else:
+            raise Exception(f"Command {args.command} not recognized")
     finally:
         spark.stop()
 
