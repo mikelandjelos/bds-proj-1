@@ -187,6 +187,138 @@ docker compose exec app /spark/bin/spark-submit \
   --limit 10
 ```
 
+## Query cookbook (assignment-style examples)
+
+All commands below are copy-paste ready.
+
+1. Count all July 2018 records:
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  count \
+  --year 2018 \
+  --month 7
+```
+
+2. Show latest high-speed records in July (speed >= 20):
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  show \
+  --year 2018 \
+  --month 7 \
+  --min-speed 20 \
+  --sort-by timestamp \
+  --sort-desc \
+  --limit 20
+```
+
+3. Count records in a geographic window:
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  count \
+  --where "lon BETWEEN 23.6 AND 23.9" \
+  --where "lat BETWEEN 37.7 AND 37.95"
+```
+
+4. Show records for one vessel in December:
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  show \
+  --year 2018 \
+  --month 12 \
+  --vessel-id 1d2a32243707b28cb49a7c7806585b884d7f84b30c1a248eda6636f67780f0a4 \
+  --sort-by timestamp \
+  --limit 20
+```
+
+5. Show only selected columns for map-like inspection:
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  show \
+  --year 2018 \
+  --month 7 \
+  --select "timestamp,vessel_id,lon,lat,speed" \
+  --limit 15
+```
+
+6. Count low-speed traffic (possible anchoring/slow movement):
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  count \
+  --year 2018 \
+  --month 12 \
+  --max-speed 1
+```
+
+7. Count medium-speed traffic band:
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  count \
+  --year 2018 \
+  --month 7 \
+  --min-speed 5 \
+  --max-speed 15
+```
+
+8. Show records between two timestamps (epoch ms):
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  show \
+  --from-ts 1530403200000 \
+  --to-ts 1530489599000 \
+  --sort-by timestamp \
+  --limit 20
+```
+
+9. Show a custom condition using SQL expressions:
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  show \
+  --where "speed >= 12" \
+  --where "course >= 45 AND course <= 135" \
+  --select "timestamp,vessel_id,speed,course,lon,lat" \
+  --limit 20
+```
+
+10. Explore newest events while displaying fewer columns:
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  show \
+  --sort-by timestamp \
+  --sort-desc \
+  --select "timestamp,vessel_id,speed" \
+  --limit 25
+```
+
 ## Error behavior and troubleshooting
 
 Unknown or missing columns:
