@@ -2,18 +2,14 @@
 
 ## Layer model
 
-### Infrastructure structure diagram
+### Infrastructure structure diagram (components only)
 
 ```mermaid
 flowchart TB
     subgraph HDFS["HDFS layer (storage)"]
       NN["NameNode"]
       DN["DataNode"]
-      RAW["/bds/proj1/raw"]
-      PROC["/bds/proj1/processed"]
       NN <--> DN
-      NN --> RAW
-      NN --> PROC
     end
 
     subgraph SPARK["Spark layer (compute)"]
