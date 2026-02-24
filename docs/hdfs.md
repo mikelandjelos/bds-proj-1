@@ -3,6 +3,7 @@
 This step brings up only HDFS (NameNode + DataNode), then verifies upload/query.
 Current prototype runs without Docker volumes, so HDFS data is ephemeral.
 Dataset input is mounted into `namenode` as read-only bind mount.
+For infra structure and top-level workflow visuals, use `docs/architecture.md` and `docs/strategy.md`.
 
 ## Fast path (script)
 

@@ -1,6 +1,7 @@
 # App layer (job submission)
 
 This document defines the app layer as the control plane that submits Spark jobs.
+For infra structure and top-level workflow visuals, use `docs/architecture.md` and `docs/strategy.md`.
 
 ## Service
 

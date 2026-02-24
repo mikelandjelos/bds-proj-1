@@ -1,12 +1,14 @@
 # bds-proj-1
 
 ## What this repo is
+
 Course project for Big Data Systems using the Piraeus AIS dataset.
 
 - Dataset: [The Piraeus AIS Dataset for Large-scale Maritime Data Analytics](https://zenodo.org/records/5792100#.Yd63IFko9PY)
 - Paper: [The Piraeus AIS dataset for large-scale maritime data analytics](https://www.sciencedirect.com/science/article/pii/S2352340921010568)
 
 ## Architecture direction
+
 Target architecture is a 3-layer model:
 
 1. HDFS layer (storage/persistence)
@@ -16,6 +18,7 @@ Target architecture is a 3-layer model:
 Preprocessing is defined as an App-layer job submitted to Spark and reading/writing HDFS.
 
 ## Current status
+
 - Phase 1 completed: HDFS upload flow is verified.
 - Phase 2 completed: preprocessing writes Parquet outputs to HDFS via Spark.
 - Phase 3 completed: layered HDFS + Spark + App submission flow is verified.

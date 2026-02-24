@@ -1,6 +1,7 @@
 # Spark layer (infrastructure)
 
 This document covers only Spark cluster infrastructure (no app logic).
+For infra structure and top-level workflow visuals, use `docs/architecture.md` and `docs/strategy.md`.
 
 ## Services
 

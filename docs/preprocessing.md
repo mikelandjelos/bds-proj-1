@@ -6,6 +6,8 @@ This phase converts raw AIS CSV from HDFS into three outputs on HDFS:
 - `hdfs://namenode:9000/bds/proj1/processed/quarantine`
 - `hdfs://namenode:9000/bds/proj1/processed/quality_report`
 
+For infra structure and top-level workflow visuals, use `docs/architecture.md` and `docs/strategy.md`.
+
 ## Architecture placement
 Preprocessing is an **App-layer job**.
 

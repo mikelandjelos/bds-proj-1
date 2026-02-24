@@ -28,6 +28,22 @@ Preprocessing is an App-layer job (submitted to Spark, reading/writing HDFS).
 
 ## Phase plan
 
+### Top-level workflow diagram
+
+```mermaid
+flowchart LR
+    RAWCSV["Raw AIS CSV files"] --> P1["Phase 1: upload to HDFS"]
+    P1 --> HDFSRAW["HDFS /bds/proj1/raw"]
+    HDFSRAW --> P2["Phase 2: preprocessing job"]
+    P2 --> HDFSPROC["HDFS /bds/proj1/processed/*"]
+    HDFSPROC --> P4["Phase 4: analytics CLI app"]
+    P4 --> OUT["Results"]
+    HDFSPROC --> P5A["Phase 5A: --master local[*]"]
+    HDFSPROC --> P5B["Phase 5B: --master spark://..."]
+    P5A --> CMP["Side-by-side benchmark report"]
+    P5B --> CMP
+```
+
 ### Phase 1 (completed)
 
 HDFS bring-up, upload, verification.

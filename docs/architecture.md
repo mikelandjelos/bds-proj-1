@@ -2,6 +2,36 @@
 
 ## Layer model
 
+### Infrastructure structure diagram
+
+```mermaid
+flowchart TB
+    subgraph HDFS["HDFS layer (storage)"]
+      NN["NameNode"]
+      DN["DataNode"]
+      RAW["/bds/proj1/raw"]
+      PROC["/bds/proj1/processed"]
+      NN <--> DN
+      NN --> RAW
+      NN --> PROC
+    end
+
+    subgraph SPARK["Spark layer (compute)"]
+      SM["Spark master"]
+      SW1["Spark worker 1"]
+      SW2["Spark worker 2"]
+      SM --> SW1
+      SM --> SW2
+    end
+
+    subgraph APP["App layer (orchestration)"]
+      APPC["app container"]
+    end
+
+    APPC --> SM
+    APPC <--> NN
+```
+
 ### 1) HDFS layer
 
 - Services: NameNode + DataNode(s)
