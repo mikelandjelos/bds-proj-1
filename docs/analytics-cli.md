@@ -319,6 +319,115 @@ docker compose exec app /spark/bin/spark-submit \
   --limit 25
 ```
 
+## Query cookbook (report-oriented set)
+
+Use these labels directly in your report text.
+
+Query A. Baseline volume on processed dataset
+Purpose: establish total record count on clean data.
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  count
+```
+
+Query B. Monthly traffic slice (December 2018)
+Purpose: compare seasonal/period traffic volume.
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  count \
+  --year 2018 \
+  --month 12
+```
+
+Query C. High-speed events in a month
+Purpose: estimate aggressive/fast movement activity.
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  count \
+  --year 2018 \
+  --month 7 \
+  --min-speed 20
+```
+
+Query D. Low-speed events in a month
+Purpose: approximate slow/anchoring-like behavior.
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  count \
+  --year 2018 \
+  --month 12 \
+  --max-speed 1
+```
+
+Query E. Geographic window traffic
+Purpose: inspect activity around a bounded lon/lat zone.
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  count \
+  --where "lon BETWEEN 23.6 AND 23.9" \
+  --where "lat BETWEEN 37.7 AND 37.95"
+```
+
+Query F. Vessel track sample
+Purpose: inspect one vessel's records over a period.
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  show \
+  --year 2018 \
+  --month 12 \
+  --vessel-id 1d2a32243707b28cb49a7c7806585b884d7f84b30c1a248eda6636f67780f0a4 \
+  --sort-by timestamp \
+  --limit 30
+```
+
+Query G. Time-window event extraction
+Purpose: isolate records in a strict timestamp interval.
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  show \
+  --from-ts 1530403200000 \
+  --to-ts 1530489599000 \
+  --sort-by timestamp \
+  --limit 25
+```
+
+Query H. Reproducible sample table for appendix
+Purpose: produce a compact, human-readable sample output table.
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  show \
+  --year 2018 \
+  --month 7 \
+  --sort-by timestamp \
+  --sort-desc \
+  --select "timestamp,vessel_id,speed,lon,lat" \
+  --limit 20
+```
+
 ## Error behavior and troubleshooting
 
 Unknown or missing columns:
