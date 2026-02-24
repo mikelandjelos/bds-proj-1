@@ -31,6 +31,34 @@ docker compose exec app /spark/bin/spark-submit \
   --exclude-file-regex '.*sample.*'
 ```
 
+## Submit analytics CLI job (Phase 4 step 1)
+
+Count example:
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  count \
+  --year 2018 \
+  --month 12
+```
+
+Show/filter/sort example:
+
+```bash
+docker compose exec app /spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  /workspace/scripts/ais_analytics.py \
+  show \
+  --year 2018 \
+  --month 7 \
+  --min-speed 15 \
+  --sort-by timestamp \
+  --sort-desc \
+  --limit 10
+```
+
 ## Verify output
 
 ```bash
@@ -44,3 +72,4 @@ docker compose exec namenode hdfs dfs -count -h /bds/proj1/processed/quality_rep
 
 - Business jobs belong to app layer; Spark layer is execution only.
 - App layer should be extended later with CLI/API interfaces.
+- Detailed CLI reference: `docs/analytics-cli.md`.

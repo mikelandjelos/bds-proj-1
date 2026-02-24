@@ -64,12 +64,12 @@ Layered infra alignment:
 - Spark cluster layer added
 - App layer container submission flow finalized
 
-### Phase 4 (next)
+### Phase 4 (active)
 
 Analytics app features:
 
-- filtering/sorting/counting/display
-- grouped min/max/mean/stddev
+- step 1 completed: filtering/sorting/counting/display
+- step 2 pending: grouped min/max/mean/stddev
 
 ### Phase 5 (pending)
 
