@@ -88,3 +88,4 @@ docker compose exec namenode hdfs dfs -count -h /bds/proj1/processed/quality_rep
 - Business jobs belong to app layer; Spark layer is execution only.
 - App layer should be extended later with CLI/API interfaces.
 - Detailed CLI reference: `docs/analytics-cli.md`.
+- Benchmark runner reference: `docs/benchmarking.md`.

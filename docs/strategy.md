@@ -71,13 +71,12 @@ Analytics app features:
 - filtering/sorting/counting/display
 - grouped min/max/mean/stddev
 
-### Phase 5 (pending)
+### Phase 5 (active)
 
 Performance comparison:
 
-- same app + same HDFS data
-- `local[*]` vs `spark://...`
-- repeated runs and side-by-side metrics
+- step 1 completed: benchmark runner with timestamped standalone/cluster runs
+- step 2 pending: report generation (side-by-side tables/charts)
 
 ## Checkpoints
 

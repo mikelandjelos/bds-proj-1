@@ -23,7 +23,8 @@ Preprocessing is defined as an App-layer job submitted to Spark and reading/writ
 - Phase 2 completed: preprocessing writes Parquet outputs to HDFS via Spark.
 - Phase 3 completed: layered HDFS + Spark + App submission flow is verified.
 - Phase 4 completed: analytics CLI supports `count`, `show`, and grouped statistics (`min/max/avg/stddev` by group).
-- Next step (not started): performance comparison (`local[*]` vs `spark://...`) on same HDFS input.
+- Phase 5 step 1 completed: benchmark runner stores timestamped runs for standalone and cluster modes.
+- Phase 5 step 2 pending: aggregate run history into side-by-side report/charts.
 
 ## Documentation
 
@@ -33,6 +34,7 @@ Preprocessing is defined as an App-layer job submitted to Spark and reading/writ
 - App layer workflow: `docs/app-layer.md`
 - Preprocessing workflow: `docs/preprocessing.md`
 - Analytics CLI workflow: `docs/analytics-cli.md`
+- Benchmark workflow: `docs/benchmarking.md`
 - Atomic execution plan: `docs/strategy.md`
 
 ## Reproducibility checkpoints
