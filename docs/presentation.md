@@ -354,14 +354,14 @@ Implikacija:
 
 Ograničenja trenutnog eksperimenta:
 
-- jedan data scale (~1GB raw)
+- jedan obim podataka (~1GB raw)
 - jedan host i ograničeni worker resursi
 - fokus na latency, ne na throughput pod konkurentnim opterećenjem
 
 Sledeće:
 
-1. benchmark na većim scale-ovima (npr. 5GB+ raw)
-2. tuning Spark parametara (shuffle partitions, executor memory/cores)
+1. benchmark na većim obimima podataka (npr. 5GB+ raw)
+2. podešavanje Spark parametara (shuffle partitions, executor memory/cores)
 3. finalna vizuelna analiza (pomocu `aggregate.csv`)
 
 ---
