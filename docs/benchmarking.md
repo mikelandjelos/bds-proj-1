@@ -66,11 +66,18 @@ Timestamps are UTC and never overwritten.
 
 Each run directory contains:
 
-- `meta.json` (benchmark/query metadata)
+- `meta.json` (benchmark/query metadata, command, raw+processed size snapshot)
 - `results.json` (per-iteration status and file references)
 - `summary.json` (min/max/avg duration on successful iterations)
+- `run_report.md` (human-readable per-run report with all iterations)
 - `iter_XX.stdout.log` (spark-submit output)
 - `iter_XX.stderr.log` (errors/warnings)
+
+Aggregate report structure (`aggregate.md`):
+
+- included runs table (all runs included in this aggregation call)
+- included run details section (sizes + command for each run)
+- summary section at the end (grouped by benchmark name and mode)
 
 ## Notes
 
