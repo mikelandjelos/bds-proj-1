@@ -1,4 +1,4 @@
-# Phase 2: Preprocessing and reformatting
+# Preprocessing and Reformatting
 
 This phase converts raw AIS CSV from HDFS into three outputs on HDFS:
 

@@ -19,12 +19,12 @@ Preprocessing is defined as an App-layer job submitted to Spark and reading/writ
 
 ## Current status
 
-- Phase 1 completed: HDFS upload flow is verified.
-- Phase 2 completed: preprocessing writes Parquet outputs to HDFS via Spark.
-- Phase 3 completed: layered HDFS + Spark + App submission flow is verified.
-- Phase 4 completed: analytics CLI supports `count`, `show`, and grouped statistics (`min/max/avg/stddev` by group).
-- Phase 5 step 1 completed: benchmark runner stores timestamped runs for standalone and cluster modes.
-- Phase 5 step 2 pending: aggregate run history into side-by-side report/charts.
+- HDFS upload flow is verified.
+- Preprocessing writes Parquet outputs to HDFS via Spark.
+- Layered HDFS + Spark + App submission flow is verified.
+- Analytics CLI supports `count`, `show`, and grouped statistics (`min/max/avg/stddev` by group).
+- Benchmark runner stores timestamped runs for standalone and cluster modes.
+- Benchmark aggregation/reporting supports campaign-style run summaries.
 
 ## Documentation
 

@@ -1,4 +1,4 @@
-# Phase 1: HDFS only (atomic step)
+# HDFS Workflow
 
 This step brings up only HDFS (NameNode + DataNode), then verifies upload/query.
 Current prototype runs without Docker volumes, so HDFS data is ephemeral.

@@ -1,85 +1,108 @@
-# Phase 5 (step 1): Benchmark runner
+# Benchmarking
 
-This step introduces one benchmark program with timestamped, append-only run artifacts.
+This document describes how to run benchmark workloads, store timestamped run artifacts,
+and generate summary reports.
 
-Script:
+Scripts:
 
 - `scripts/benchmark_ais_analytics.py`
+- `scripts/aggregate_benchmark_runs.py`
 
-Benchmark program executed in this step:
+## What the runner records
 
-- `ais_analytics.py stats --year 2018 --group-by month --metrics speed --order-by month --limit 12`
+Each run captures:
 
-Execution modes:
+- benchmark name (`--benchmark-name`)
+- full `spark-submit` command
+- query parameters
+- raw input size snapshot (`--raw-input`, HDFS `dfs -count`)
+- processed input size snapshot (`--input`, HDFS `dfs -count`)
+- per-iteration duration and status
 
-- standalone: `--master local[*]`
-- cluster: `--master spark://spark-master:7077`
+## Run one benchmark batch
 
-## Run benchmark
-
-From repo root:
-
-```bash
-python3 scripts/benchmark_ais_analytics.py --modes both --repeats 3
-```
-
-Quick smoke run:
+Default benchmark query is `stats --year 2018 --group-by month --metrics speed --order-by month --limit 12`.
 
 ```bash
-python3 scripts/benchmark_ais_analytics.py --modes both --repeats 1
+python3 scripts/benchmark_ais_analytics.py \
+  --benchmark-name ais_stats_monthly_speed_1gb \
+  --modes both \
+  --repeats 5 \
+  --raw-input /bds/proj1/raw \
+  --input hdfs://namenode:9000/bds/proj1/processed/clean
 ```
 
-Dry run (no execution):
+Use a different analytics command with `--query-override`:
 
 ```bash
-python3 scripts/benchmark_ais_analytics.py --modes both --repeats 1 --dry-run
+python3 scripts/benchmark_ais_analytics.py \
+  --benchmark-name ais_count_dec2018_1gb \
+  --modes both \
+  --repeats 5 \
+  --query-override "count --year 2018 --month 12"
 ```
-
-## Aggregate benchmark history
-
-Generate a timestamped aggregation report from all saved runs:
 
 ```bash
-python3 scripts/aggregate_benchmark_runs.py
+python3 scripts/benchmark_ais_analytics.py \
+  --benchmark-name ais_show_fast_jul2018_1gb \
+  --modes both \
+  --repeats 5 \
+  --query-override "show --year 2018 --month 7 --min-speed 15 --sort-by timestamp --sort-desc --limit 20"
 ```
 
-Latest-only report (one row per mode):
+## Run artifact layout
 
-```bash
-python3 scripts/aggregate_benchmark_runs.py --latest-only
-```
+Run directories:
 
-Aggregation outputs are written to:
-
-- `runs/reports/<timestamp>/aggregate.json`
-- `runs/reports/<timestamp>/aggregate.csv`
-- `runs/reports/<timestamp>/aggregate.md`
-
-## Output layout
-
-Runs are stored under:
-
-- `runs/standalone/<timestamp>/`
-- `runs/cluster/<timestamp>/`
-
-Timestamps are UTC and never overwritten.
+- `runs/<campaign_or_default>/runs/standalone/<timestamp>/`
+- `runs/<campaign_or_default>/runs/cluster/<timestamp>/`
 
 Each run directory contains:
 
-- `meta.json` (benchmark/query metadata, command, raw+processed size snapshot)
-- `results.json` (per-iteration status and file references)
-- `summary.json` (min/max/avg duration on successful iterations)
-- `run_report.md` (human-readable per-run report with all iterations)
-- `iter_XX.stdout.log` (spark-submit output)
-- `iter_XX.stderr.log` (errors/warnings)
+- `meta.json`
+- `results.json`
+- `summary.json`
+- `run_report.md`
+- `iter_XX.stdout.log`
+- `iter_XX.stderr.log`
 
-Aggregate report structure (`aggregate.md`):
+## Aggregate reports
 
-- included runs table (all runs included in this aggregation call)
-- included run details section (sizes + command for each run)
-- summary section at the end (grouped by benchmark name and mode)
+Generate report from all runs in a directory:
 
-## Notes
+```bash
+python3 scripts/aggregate_benchmark_runs.py \
+  --runs-dir runs/<campaign>/runs \
+  --output-root runs/<campaign>/reports
+```
 
-- Runs are append-only and intended for later aggregation/report generation.
-- `runs/` is git-ignored to keep repository history clean.
+Generate latest-only view (one row per mode):
+
+```bash
+python3 scripts/aggregate_benchmark_runs.py \
+  --runs-dir runs/<campaign>/runs \
+  --output-root runs/<campaign>/reports \
+  --latest-only
+```
+
+Aggregate outputs:
+
+- `aggregate.json`
+- `aggregate.csv`
+- `aggregate.md`
+
+`aggregate.md` structure:
+
+- included runs
+- included run details
+- summary section at the end (grouped by benchmark and mode)
+
+## Campaign pattern (5 reports + final summary)
+
+Recommended reproducible pattern:
+
+1. run benchmark with `--repeats 1` for iteration 1, then generate `--latest-only` report
+2. repeat for iterations 2..5
+3. run one final aggregate (without `--latest-only`) for 5x2 summary
+
+This keeps one report per iteration plus one final report for reasoning.

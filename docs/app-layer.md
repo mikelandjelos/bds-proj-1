@@ -31,7 +31,7 @@ docker compose exec app /spark/bin/spark-submit \
   --exclude-file-regex '.*sample.*'
 ```
 
-## Submit analytics CLI job (Phase 4)
+## Submit analytics CLI job
 
 Count example:
 

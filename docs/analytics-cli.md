@@ -1,4 +1,4 @@
-# Phase 4: Analytics CLI reference
+# Analytics CLI Reference
 
 This document is the full reference for the current analytics CLI.
 

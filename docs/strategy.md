@@ -26,7 +26,7 @@ We are steering toward a 3-layer architecture:
 
 Preprocessing is an App-layer job (submitted to Spark, reading/writing HDFS).
 
-## Phase plan
+## Execution plan
 
 ### Top-level workflow diagram
 
@@ -44,11 +44,11 @@ flowchart LR
     P5B --> CMP
 ```
 
-### Phase 1 (completed)
+### HDFS Upload (completed)
 
 HDFS bring-up, upload, verification.
 
-### Phase 2 (completed)
+### Preprocessing (completed)
 
 Preprocess and reformat raw CSV into:
 
@@ -56,7 +56,7 @@ Preprocess and reformat raw CSV into:
 - `processed/quarantine`
 - `processed/quality_report`
 
-### Phase 3 (completed)
+### Layered Infrastructure (completed)
 
 Layered infra alignment:
 
@@ -64,14 +64,14 @@ Layered infra alignment:
 - Spark cluster layer added
 - App layer container submission flow finalized
 
-### Phase 4 (completed)
+### Analytics CLI (completed)
 
 Analytics app features:
 
 - filtering/sorting/counting/display
 - grouped min/max/mean/stddev
 
-### Phase 5 (active)
+### Benchmarking (active)
 
 Performance comparison:
 
@@ -80,6 +80,6 @@ Performance comparison:
 
 ## Checkpoints
 
-- Phase 1: `automation/phase1_hdfs_upload.sh`
-- Phase 2: `automation/phase2_preprocessing.sh`
-- Phase 4: `automation/phase4_analytics_cli.sh`
+- HDFS upload: `automation/phase1_hdfs_upload.sh`
+- Preprocessing: `automation/phase2_preprocessing.sh`
+- Analytics CLI: `automation/phase4_analytics_cli.sh`
