@@ -1,10 +1,9 @@
 # bds-proj-1
 
-## Srpski
-
 Autor: `Mihajlo Madic 2119`
 
 Uradjeno:
+
 - Docker-first 3-slojna arhitektura: HDFS + Spark + App.
 - Upload sirovih AIS podataka na HDFS i verifikacija.
 - Preprocesiranje u Parquet (`clean`, `quarantine`, `quality_report`) na HDFS.
@@ -13,14 +12,14 @@ Uradjeno:
 - Reproducibility checkpoint skripte: `phase1_hdfs_upload.sh`, `phase2_preprocessing.sh`, `phase4_analytics_cli.sh`, `phase5_full_benchmarks.sh`.
 
 Prezentacija:
-- `presentation.pptx`
-- `docs/presentation.md`
 
-## English
+- [presentation.pptx](presentation.pptx)
+- [docs/presentation.md](docs/presentation.md)
 
-Author: `Mihajlo Madic 2119`
+---
 
 Completed:
+
 - Docker-first 3-layer architecture: HDFS + Spark + App.
 - Raw AIS upload to HDFS with verification.
 - Preprocessing to Parquet (`clean`, `quarantine`, `quality_report`) on HDFS.
@@ -29,5 +28,6 @@ Completed:
 - Reproducibility checkpoint scripts: `phase1_hdfs_upload.sh`, `phase2_preprocessing.sh`, `phase4_analytics_cli.sh`, `phase5_full_benchmarks.sh`.
 
 Presentation:
-- `presentation.pptx`
-- `docs/presentation.md`
+
+- [presentation.pptx](presentation.pptx)
+- [docs/presentation.md](docs/presentation.md)
