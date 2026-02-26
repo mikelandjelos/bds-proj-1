@@ -1,4 +1,4 @@
-# Project strategy (atomic execution)
+# Project Strategy (Atomic Execution)
 
 ## Goal
 
@@ -32,16 +32,16 @@ Preprocessing is an App-layer job (submitted to Spark, reading/writing HDFS).
 
 ```mermaid
 flowchart LR
-    RAWCSV["Raw AIS CSV files"] --> P1["Phase 1: upload to HDFS"]
-    P1 --> HDFSRAW["HDFS /bds/proj1/raw"]
-    HDFSRAW --> P2["Phase 2: preprocessing job"]
-    P2 --> HDFSPROC["HDFS /bds/proj1/processed/*"]
-    HDFSPROC --> P4["Phase 4: analytics CLI app"]
-    P4 --> OUT["Results"]
-    HDFSPROC --> P5A["Phase 5A: --master local[*]"]
-    HDFSPROC --> P5B["Phase 5B: --master spark://..."]
-    P5A --> CMP["Side-by-side benchmark report"]
-    P5B --> CMP
+    RAWCSV["Raw AIS CSV files"] --> UPLOAD["Upload to HDFS"]
+    UPLOAD --> HDFSRAW["HDFS /bds/proj1/raw"]
+    HDFSRAW --> PREP["Preprocessing job"]
+    PREP --> HDFSPROC["HDFS /bds/proj1/processed/*"]
+    HDFSPROC --> APP["Analytics CLI app"]
+    APP --> OUT["Results"]
+    HDFSPROC --> MLOCAL["Benchmark mode: --master local[*]"]
+    HDFSPROC --> MCLUSTER["Benchmark mode: --master spark://..."]
+    MLOCAL --> CMP["Side-by-side benchmark report"]
+    MCLUSTER --> CMP
 ```
 
 ### HDFS Upload (completed)
@@ -71,12 +71,14 @@ Analytics app features:
 - filtering/sorting/counting/display
 - grouped min/max/mean/stddev
 
-### Benchmarking (active)
+### Benchmarking (completed)
 
 Performance comparison:
 
-- step 1 completed: benchmark runner with timestamped standalone/cluster runs
-- step 2 pending: report generation (side-by-side tables/charts)
+- benchmark runner with timestamped standalone/cluster runs
+- raw and processed input size snapshots per run
+- per-iteration run reports and final aggregate summaries
+- full end-to-end checkpoint script for rebuilding stack and running all benchmark workloads
 
 ## Checkpoints
 
