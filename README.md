@@ -55,6 +55,6 @@ Marp source:
 Generate outputs:
 
 ```bash
-marp docs/presentation.md --pptx -o docs/presentation.pptx
-marp docs/presentation.md --pdf -o docs/presentation.pdf
+marp docs/presentation.md --pptx -o presentation.pptx
+marp docs/presentation.md --pdf -o presentation.pdf
 ```

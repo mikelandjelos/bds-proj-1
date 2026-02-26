@@ -122,6 +122,6 @@ Default campaign iterations: `5` (env override: `ITERATIONS=<n>`).
 ## Presentation generation (Marp)
 
 ```bash
-marp docs/presentation.md --pptx -o docs/presentation.pptx
-marp docs/presentation.md --pdf -o docs/presentation.pdf
+marp docs/presentation.md --pptx -o presentation.pptx
+marp docs/presentation.md --pdf -o presentation.pdf
 ```

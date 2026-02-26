@@ -11,7 +11,7 @@ title: BDS Projekat 1
 
 - Kurs: Big Data Systems
 - Dataset: Piraeus AIS (Zenodo 5792100)
-- Autor: Mihajlo (projekat)
+- Autor: Mihajlo Madic 2119
 
 ---
 
@@ -19,11 +19,11 @@ title: BDS Projekat 1
 
 Implementirati end-to-end tok:
 
-1. priprema podataka i smeštaj na HDFS
+1. priprema podataka i upload na HDFS
 2. Spark aplikacija sa CLI upitima (`count`, `show`, `stats`)
 3. benchmark poređenje režima izvršavanja
 
-Traženi artefakti:
+Rezultati (izlazi) projekta:
 
 - reproducibilna infrastruktura (Docker Compose)
 - merenja performansi
@@ -68,7 +68,7 @@ Raw CSV -> HDFS (/raw) -> preprocess job -> HDFS (/processed/*)
 
 ---
 
-# Docker Compose sloj
+# Docker Compose
 
 Servisi:
 
@@ -362,7 +362,7 @@ Sledeće:
 
 1. benchmark na većim scale-ovima (npr. 5GB+ raw)
 2. tuning Spark parametara (shuffle partitions, executor memory/cores)
-3. finalni uporedni grafici iz `aggregate.csv`
+3. finalna vizuelna analiza (pomocu `aggregate.csv`)
 
 ---
 
