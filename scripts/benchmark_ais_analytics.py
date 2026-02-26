@@ -80,6 +80,16 @@ def parse_args() -> argparse.Namespace:
         help="Limit for stats output",
     )
     parser.add_argument(
+        "--query-override",
+        default=None,
+        help=(
+            "Full analytics CLI query override (example: "
+            "\"count --year 2018 --month 12\" or "
+            "\"show --year 2018 --month 7 --limit 20\"). "
+            "If set, stats-specific args are ignored."
+        ),
+    )
+    parser.add_argument(
         "--timeout-sec",
         type=int,
         default=0,
@@ -172,6 +182,23 @@ def query_hdfs_count(path: str, dry_run: bool) -> dict[str, Any]:
 
 
 def spark_submit_cmd(master: str, args: argparse.Namespace) -> list[str]:
+    analytics_query = (
+        shlex.split(args.query_override)
+        if args.query_override
+        else [
+            "stats",
+            "--year",
+            str(args.year),
+            "--group-by",
+            args.group_by,
+            "--metrics",
+            args.metrics,
+            "--order-by",
+            "month",
+            "--limit",
+            str(args.limit),
+        ]
+    )
     return [
         "docker",
         "compose",
@@ -184,18 +211,7 @@ def spark_submit_cmd(master: str, args: argparse.Namespace) -> list[str]:
         "/workspace/scripts/ais_analytics.py",
         "--input",
         args.input,
-        "stats",
-        "--year",
-        str(args.year),
-        "--group-by",
-        args.group_by,
-        "--metrics",
-        args.metrics,
-        "--order-by",
-        "month",
-        "--limit",
-        str(args.limit),
-    ]
+    ] + analytics_query
 
 
 def write_text(path: Path, content: str) -> None:
@@ -348,7 +364,7 @@ def run_mode(
         "mode": mode,
         "master": master,
         "benchmark_name": args.benchmark_name,
-        "benchmark_program": "ais_analytics.py stats",
+        "benchmark_program": "ais_analytics.py",
         "benchmark_command": cmd,
         "benchmark_command_shell": shlex.join(cmd),
         "query": {
@@ -358,6 +374,7 @@ def run_mode(
             "metrics": args.metrics,
             "order_by": "month",
             "limit": args.limit,
+            "query_override": args.query_override,
         },
         "data_sizes": {
             "raw": raw_profile,
