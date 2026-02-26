@@ -83,3 +83,4 @@ Performance comparison:
 - HDFS upload: `automation/phase1_hdfs_upload.sh`
 - Preprocessing: `automation/phase2_preprocessing.sh`
 - Analytics CLI: `automation/phase4_analytics_cli.sh`
+- Full benchmarking: `automation/phase5_full_benchmarks.sh`

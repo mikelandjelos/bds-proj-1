@@ -7,6 +7,7 @@ Scripts:
 
 - `scripts/benchmark_ais_analytics.py`
 - `scripts/aggregate_benchmark_runs.py`
+- `automation/phase5_full_benchmarks.sh`
 
 ## What the runner records
 
@@ -106,3 +107,21 @@ Recommended reproducible pattern:
 3. run one final aggregate (without `--latest-only`) for 5x2 summary
 
 This keeps one report per iteration plus one final report for reasoning.
+
+## Full project benchmark checkpoint
+
+Run full storage+compute+app rebuild and all 4 benchmark campaigns
+(`stats speed`, `stats heading/course`, `count`, `show`):
+
+```bash
+automation/phase5_full_benchmarks.sh
+```
+
+Default campaign iterations: `5` (env override: `ITERATIONS=<n>`).
+
+## Presentation generation (Marp)
+
+```bash
+marp docs/presentation.md --pptx -o docs/presentation.pptx
+marp docs/presentation.md --pdf -o docs/presentation.pdf
+```

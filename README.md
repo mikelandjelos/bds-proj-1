@@ -42,6 +42,19 @@ Preprocessing is defined as an App-layer job submitted to Spark and reading/writ
 After each completed and approved phase, a checkpoint script is added under `automation/` as:
 
 - `phase<N>_<semantic_name>.sh` (example: `phase1_hdfs_upload.sh`)
-- current checkpoints: `phase1_hdfs_upload.sh`, `phase2_preprocessing.sh`, `phase4_analytics_cli.sh`
+- current checkpoints: `phase1_hdfs_upload.sh`, `phase2_preprocessing.sh`, `phase4_analytics_cli.sh`, `phase5_full_benchmarks.sh`
 
 These scripts are created only after the phase is verified and docs are updated.
+
+## Presentation generation
+
+Marp source:
+
+- `docs/presentation.md`
+
+Generate outputs:
+
+```bash
+marp docs/presentation.md --pptx -o docs/presentation.pptx
+marp docs/presentation.md --pdf -o docs/presentation.pdf
+```
