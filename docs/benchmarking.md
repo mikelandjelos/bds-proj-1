@@ -7,7 +7,7 @@ Scripts:
 
 - `scripts/benchmark_ais_analytics.py`
 - `scripts/aggregate_benchmark_runs.py`
-- `automation/phase5_full_benchmarks.sh`
+- `automation/phase4_full_benchmarks.sh`
 
 ## What the runner records
 
@@ -108,20 +108,26 @@ Recommended reproducible pattern:
 
 This keeps one report per iteration plus one final report for reasoning.
 
-## Full project benchmark checkpoint
+## Full benchmark checkpoint
 
 Run full storage+compute+app rebuild and all 4 benchmark campaigns
 (`stats speed`, `stats heading/course`, `count`, `show`):
 
 ```bash
-automation/phase5_full_benchmarks.sh
+automation/phase4_full_benchmarks.sh
 ```
 
 Default campaign iterations: `5` (env override: `ITERATIONS=<n>`).
 
-## Presentation generation (Marp)
+## Presentation generation (LaTeX Beamer)
+
+Canonical source:
+
+- `docs/presentation.tex`
+
+Generate PDF in the repository root:
 
 ```bash
-marp docs/presentation.md --pptx -o presentation.pptx
-marp docs/presentation.md --pdf -o presentation.pdf
+lualatex -interaction=nonstopmode -halt-on-error -output-directory . docs/presentation.tex
+lualatex -interaction=nonstopmode -halt-on-error -output-directory . docs/presentation.tex
 ```

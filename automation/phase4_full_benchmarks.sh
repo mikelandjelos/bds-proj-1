@@ -83,4 +83,4 @@ run_campaign \
   "show"
 
 echo
-echo "Phase 5 full benchmark checkpoint completed."
+echo "Phase 4 full benchmark checkpoint completed."

@@ -42,4 +42,4 @@ docker compose exec app /spark/bin/spark-submit \
   --limit 12
 
 echo
-echo "Phase 4 analytics CLI checkpoint completed."
+echo "Phase 3 analytics CLI checkpoint completed."
