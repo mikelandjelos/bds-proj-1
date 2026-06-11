@@ -128,6 +128,11 @@ Canonical source:
 Generate PDF in the repository root:
 
 ```bash
-lualatex -interaction=nonstopmode -halt-on-error -output-directory . docs/presentation.tex
-lualatex -interaction=nonstopmode -halt-on-error -output-directory . docs/presentation.tex
+build_dir="$(mktemp -d)"
+lualatex -interaction=nonstopmode -halt-on-error \
+  -output-directory "$build_dir" docs/presentation.tex
+lualatex -interaction=nonstopmode -halt-on-error \
+  -output-directory "$build_dir" docs/presentation.tex
+cp "$build_dir/presentation.pdf" presentation.pdf
+rm -rf "$build_dir"
 ```

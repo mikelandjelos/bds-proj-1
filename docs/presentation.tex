@@ -1,24 +1,24 @@
 \documentclass[aspectratio=169,11pt]{beamer}
 
 \usetheme{Madrid}
-\usecolortheme{seahorse}
+\usecolortheme{wolverine}
 
 \usepackage{fontspec}
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{hyperref}
+\usepackage{mihajlo-elfak-logos}
 
 \setsansfont{Latin Modern Sans}
 \setmonofont{Latin Modern Mono}
 \hypersetup{colorlinks=true, urlcolor=blue}
 \setbeamertemplate{navigation symbols}{}
-\setbeamertemplate{footline}[frame number]
 
-\title{BDS Projekat 1}
-\subtitle{AIS analitika nad HDFS + Spark}
-\author{Mihajlo Madic 2119}
-\institute{Big Data Systems}
-\date{}
+\title{Projekat I}
+\subtitle[AIS analitika nad HDFS + Spark]{AIS analitika nad HDFS + Spark}
+\author[Mihajlo Madić 2119]{Mihajlo Madić 2119}
+\institute[Big Data Systems]{Big Data Systems}
+\date{2026}
 
 \newcommand{\code}[1]{\texttt{\small #1}}
 
@@ -30,9 +30,9 @@
 
 \begin{frame}{Dataset: Piraeus AIS}
   \begin{itemize}
-    \item Korišćen je javni dataset \textit{The Piraeus AIS Dataset for Large-scale Maritime Data Analytics}, objavljen na Zenodo repozitorijumu.
-    \item Dataset sadrži AIS poruke brodova iz šire zone luke Pirej u Grčkoj.
-    \item AIS zapisi opisuju kretanje plovila kroz atribute kao što su vreme, identifikator plovila, geografska pozicija, brzina, kurs i pravac.
+    \item Korišćen je javni dataset \textit{The Piraeus AIS Dataset for Large-scale Maritime Data Analytics}, objavljen u okviru Zenodo repozitorijuma.
+    \item Dataset sadrži AIS poruke kreirane tokom aktivnosti brodova u okviru luke Pirej u Grčkoj.
+    \item AIS zapisi opisuju kretanje brodova kroz atribute kao što su vreme, identifikator broda, geografska pozicija, brzina, kurs i pravac.
     \item Originalni dataset je dovoljno veliki za Big Data scenario; za ovaj prototip korišćen je kontrolisani podskup radi bržeg razvoja i ponovljivog benchmark-a.
     \item Izvor: \url{https://zenodo.org/records/5792100}
   \end{itemize}
