@@ -79,12 +79,14 @@ Performance comparison:
 - raw and processed input size snapshots per run
 - per-iteration run reports and final aggregate summaries
 - full benchmark checkpoint script for rebuilding stack and running all benchmark workloads
+- 5GB raw-data benchmark checkpoint for scale testing with cleanup
 
 ## Checkpoints
 
-There are 4 actual reproducibility checkpoints. Layered infrastructure was a design milestone, not a separate script checkpoint; it is exercised by the preprocessing, analytics, and benchmark checkpoints.
+There are 5 actual reproducibility checkpoints. Layered infrastructure was a design milestone, not a separate script checkpoint; it is exercised by the preprocessing, analytics, and benchmark checkpoints.
 
 - HDFS upload: `automation/phase1_hdfs_upload.sh`
 - Preprocessing: `automation/phase2_preprocessing.sh`
 - Analytics CLI: `automation/phase3_analytics_cli.sh`
 - Full benchmarking: `automation/phase4_full_benchmarks.sh`
+- 5GB raw-data benchmarking: `automation/phase5_5gb_benchmarks.sh`

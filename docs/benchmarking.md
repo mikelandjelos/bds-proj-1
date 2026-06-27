@@ -8,6 +8,7 @@ Scripts:
 - `scripts/benchmark_ais_analytics.py`
 - `scripts/aggregate_benchmark_runs.py`
 - `automation/phase4_full_benchmarks.sh`
+- `automation/phase5_5gb_benchmarks.sh`
 
 ## What the runner records
 
@@ -118,6 +119,39 @@ automation/phase4_full_benchmarks.sh
 ```
 
 Default campaign iterations: `5` (env override: `ITERATIONS=<n>`).
+
+## 5GB raw benchmark checkpoint
+
+Run the same 4 benchmark campaigns against a larger temporary raw dataset:
+
+```bash
+automation/phase5_5gb_benchmarks.sh
+```
+
+What it does:
+
+- starts a clean Docker Compose stack,
+- creates temporary HDFS paths under `/bds/proj1_5gb`,
+- uploads all available real monthly raw CSV files
+  (`jan`, `feb`, `apr`, `jul`, `aug`, `dec` 2018), producing approximately
+  5GB raw input without duplicating rows,
+- preprocesses that temporary raw input into
+  `hdfs://namenode:9000/bds/proj1_5gb/processed`,
+- runs the same `stats speed`, `stats heading/course`, `count`, and `show`
+  benchmark campaigns as the 1GB checkpoint,
+- preserves timestamped benchmark reports under `runs/campaign_*_5gb_*/`,
+- removes `/bds/proj1_5gb` from HDFS on exit, including failure paths.
+
+Useful overrides:
+
+```bash
+ITERATIONS=3 automation/phase5_5gb_benchmarks.sh
+KEEP_5GB_HDFS=1 automation/phase5_5gb_benchmarks.sh
+```
+
+`KEEP_5GB_HDFS=1` is only for debugging; by default the large temporary HDFS
+dataset is deleted after the run so the local Docker stack does not retain the
+extra data.
 
 ## Presentation generation (LaTeX Beamer)
 

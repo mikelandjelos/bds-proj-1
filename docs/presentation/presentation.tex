@@ -18,7 +18,7 @@
 \subtitle[AIS analitika nad HDFS + Spark]{AIS analitika nad HDFS + Spark}
 \author[Mihajlo Madić 2119]{Mihajlo Madić 2119}
 \institute[Big Data Systems]{Big Data Systems}
-\date{\small{\textit{Niš 2026}}}
+\date{\small{\textit{Jun 2026, Niš}}}
 
 \newcommand{\code}[1]{\texttt{\small #1}}
 
@@ -31,15 +31,15 @@
 \begin{frame}{Dataset: Piraeus AIS}
   \begin{itemize}
     \item Korišćen je javni dataset \textit{The Piraeus AIS Dataset for Large-scale Maritime Data Analytics}, objavljen u okviru Zenodo repozitorijuma.
-    \item Dataset sadrži AIS poruke kreirane tokom aktivnosti brodova u okviru luke Pirej u Grčkoj.
-    \item AIS zapisi opisuju kretanje brodova kroz atribute kao što su vreme, identifikator broda, geografska pozicija, brzina, kurs i pravac.
-    \item Originalni dataset je dovoljno veliki za Big Data scenario; za ovaj prototip korišćen je kontrolisani podskup radi bržeg razvoja i ponovljivog benchmark-a.
+    \item Dataset sadrži AIS\footnote{Automatic Identification System.} zapise kreirane tokom aktivnosti brodova u okviru luke Pirej u Grčkoj.
+    \item AIS zapisi opisuju kretanje brodova kroz atribute kao što su vreme slanja (\code{timestamp}), identifikator broda (\code{vessel\_id}), geografska pozicija (\code{lon}, \code{lat}), brzina (\code{speed}), kurs\footnote{Kurs (\code{course}) opisuje stvarni smer kretanja broda, dok pravac (\code{heading}) opisuje smer njegovog pramca.} (\code{course}) i pravac (\code{heading}).
+    \item Originalni dataset je dovoljno veliki za Big Data scenario; za ovaj prototip korišćen je kontrolisani podskup radi bržeg razvoja i lakšeg i kraćeg testiranja, i generisanja benchmark-ova.
     \item Izvor: \url{https://zenodo.org/records/5792100}
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Zadatak}
-  Implementirati ceo sistem:
+  Sistem:
   \begin{enumerate}
     \item priprema podataka i upload na HDFS
     \item Spark aplikacija sa CLI upitima (\code{count}, \code{show}, \code{stats})
@@ -47,7 +47,7 @@
   \end{enumerate}
 
   \vspace{0.4cm}
-  Rezultati projekta:
+  Rezultati:
   \begin{itemize}
     \item reproducibilna infrastruktura kroz Docker Compose
     \item merenja performansi
@@ -58,8 +58,8 @@
 \begin{frame}{Obim i podaci}
   Korišćen podskup:
   \begin{itemize}
-    \item raw ulaz: \code{\textasciitilde 971.54 MiB} (jul + decembar 2018 CSV)
-    \item preprocesirano: \code{\textasciitilde 191.60 MiB} (Parquet)
+    \item raw podaci: \code{\textasciitilde 971.54 MiB} (jul + decembar 2018 CSV)
+    \item preprocesirani podaci: \code{\textasciitilde 191.60 MiB} (Parquet)
   \end{itemize}
 
   \vspace{0.35cm}
@@ -77,7 +77,7 @@
   \begin{enumerate}
     \item HDFS sloj: skladište (\code{namenode}, \code{datanode})
     \item Spark sloj: obrada (\code{spark-master}, \code{spark-worker-*})
-    \item App sloj: submission i CLI (\code{app})
+    \item App sloj: job submission i CLI (\code{app})
   \end{enumerate}
 
   \vspace{0.35cm}
@@ -87,16 +87,16 @@
 
   \begin{itemize}
     \item analytics CLI koristi \code{count}, \code{show}, \code{stats}
-    \item benchmark kampanje koriste isti HDFS izvor
+    \item svi benchmark testovi koriste isti izvor podataka (HDFS)
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Docker Compose}
   Servisi:
   \begin{itemize}
-    \item \code{namenode}, \code{datanode}
-    \item \code{spark-master}, \code{spark-worker-1}, \code{spark-worker-2}
-    \item \code{app}
+    \item \code{namenode}, \code{datanode} \Rightarrow \space storage
+    \item \code{spark-master}, \code{spark-worker-1}, \code{spark-worker-2} \Rightarrow \space compute
+    \item \code{app} \Rightarrow \space "bussiness" logic
   \end{itemize}
 
   \vspace{0.35cm}
@@ -107,34 +107,41 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Upload na HDFS}
-  Reproducibilni checkpoint:
-  \begin{verbatim}
-automation/phase1_hdfs_upload.sh
-  \end{verbatim}
+\begin{frame}[fragile]{Prva faza - upload podataka na HDFS}
+  Checkpoint:
+  \begin{center}
+	\code{automation/phase1\_hdfs\_upload.sh}
+  \end{center}
 
   Ključne komande:
+  \vspace{0.15cm}
   \scriptsize
-  \begin{verbatim}
-docker compose exec namenode hdfs dfs -mkdir -p /bds/proj1/raw
-docker compose exec namenode hdfs dfs -put -f \
-  /input/.../jul2018.csv \
-  /bds/proj1/raw/jul2018.csv
-docker compose exec namenode hdfs dfs -put -f \
-  /input/.../dec2018.csv \
-  /bds/proj1/raw/dec2018.csv
-docker compose exec namenode hdfs dfs -count -h /bds/proj1/raw
-  \end{verbatim}
+  \begin{tabular}{p{0.46\textwidth}p{0.46\textwidth}}
+    \toprule
+    Komanda & Šta radi \\
+    \midrule
+    \code{docker compose exec namenode} &
+    Izvršava HDFS komande unutar \code{namenode} kontejnera, tj. tamo gde je dostupan Hadoop CLI. \\
+    \code{hdfs dfs -mkdir -p /bds/proj1/raw} &
+    Kreira raw direktorijum u HDFS-u; opcija \code{-p} sprečava grešku ako putanja već postoji. \\
+    \code{hdfs dfs -put -f /input/.../jul2018.csv /bds/proj1/raw/jul2018.csv} &
+    Uploaduje CSV za jul 2018. iz read-only input mount-a u HDFS raw zonu; \code{-f} omogućava overwrite. \\
+    \code{hdfs dfs -put -f /input/.../dec2018.csv /bds/proj1/raw/dec2018.csv} &
+    Uploaduje CSV za decembar 2018. na istu HDFS lokaciju. \\
+    \code{hdfs dfs -count -h /bds/proj1/raw} &
+    Verifikuje upload prikazom broja direktorijuma, fajlova i ukupne veličine u formatu čitljivom za čoveka. \\
+    \bottomrule
+  \end{tabular}
   \normalsize
 \end{frame}
 
-\begin{frame}[fragile]{Preprocessing (Spark job)}
-  Reproducibilni checkpoint:
-  \begin{verbatim}
-automation/phase2_preprocessing.sh
-  \end{verbatim}
-
-  Job:
+\begin{frame}[fragile]{Druga faza - preprocesiranje podataka (kroz Spark job)}
+  Checkpoint:
+\begin{center}
+	\code{automation/phase2\_preprocessing.sh}
+\end{center}
+  
+Job:
   \begin{verbatim}
 docker compose exec app /spark/bin/spark-submit \
   --master spark://spark-master:7077 \
@@ -190,10 +197,10 @@ ais_analytics.py stats --year 2018 --group-by month --metrics speed
   \end{itemize}
 
   \vspace{0.35cm}
-  Kampanja:
+  Kampanja (jedan kompletan benchmark):
   \begin{itemize}
     \item 5 iteracija
-    \item svaka iteracija: 1 run po modu + poseban report
+    \item svaka iteracija: 1 izvršenje po modu (klaster/standalone) + zaseban izveštaj
     \item zatim finalni agregat (5x2)
   \end{itemize}
 \end{frame}
@@ -216,8 +223,8 @@ python3 scripts/aggregate_benchmark_runs.py \
   \end{verbatim}
 \end{frame}
 
-\begin{frame}{Full checkpoint}
-  Finalni reproducibilni sistem:
+\begin{frame}{Finalni sistem}
+  Checkpoint:
   \begin{center}
     \code{automation/phase5\_full\_benchmarks.sh}
   \end{center}
@@ -254,7 +261,7 @@ runs/campaign_<id>/
   \code{meta.json} čuva raw i processed size snapshot.
 \end{frame}
 
-\begin{frame}[fragile]{Rezultati: Stats (speed)}
+\begin{frame}[fragile]{Rezultati 1GB: Stats (speed)}
   Kampanja: \code{campaign\_20260226T101745Z\_stats\_speed}
 
   \scriptsize
@@ -264,20 +271,17 @@ stats --year 2018 --group-by month --metrics speed \
   \end{verbatim}
   \normalsize
 
-  \begin{tabular}{lrrrrr}
+  \begin{tabular}{lrrrr}
     \toprule
-    mode & n & mean s & stddev s & min s & max s \\
+    mode & n & mean [s] & min [s] & max [s] \\
     \midrule
-    standalone & 5 & 11.049 & 0.576 & 10.350 & 11.781 \\
-    cluster & 5 & 15.444 & 0.458 & 15.023 & 16.202 \\
+    standalone & 5 & 11.049 & 10.350 & 11.781 \\
+    cluster & 5 & 15.444 & 15.023 & 16.202 \\
     \bottomrule
   \end{tabular}
-
-  \vspace{0.25cm}
-  Raw: \code{971.54 MiB}, Processed: \code{191.60 MiB}
 \end{frame}
 
-\begin{frame}[fragile]{Rezultati: Stats (heading, course)}
+\begin{frame}[fragile]{Rezultati 1GB: Stats (heading, course)}
   Kampanja: \code{campaign\_20260226T102011Z\_stats\_heading\_course}
 
   \scriptsize
@@ -287,37 +291,35 @@ stats --year 2018 --group-by month --metrics heading,course \
   \end{verbatim}
   \normalsize
 
-  \begin{tabular}{lrrrrr}
+  \begin{tabular}{lrrrr}
     \toprule
-    mode & n & mean s & stddev s & min s & max s \\
+    mode & n & mean [s] & min [s] & max [s] \\
     \midrule
-    standalone & 5 & 11.132 & 0.498 & 10.760 & 11.825 \\
-    cluster & 5 & 16.069 & 0.611 & 15.484 & 16.734 \\
+    standalone & 5 & 11.132 & 10.760 & 11.825 \\
+    cluster & 5 & 16.069 & 15.484 & 16.734 \\
     \bottomrule
   \end{tabular}
 
-  \vspace{0.25cm}
-  Raw: \code{971.54 MiB}, Processed: \code{191.60 MiB}
 \end{frame}
 
-\begin{frame}[fragile]{Rezultati: Count}
+\begin{frame}[fragile]{Rezultati 1GB: Count}
   Kampanja: \code{campaign\_20260226T102241Z\_count}
 
   \begin{verbatim}
 count --year 2018 --month 12
   \end{verbatim}
 
-  \begin{tabular}{lrrrrr}
+  \begin{tabular}{lrrrr}
     \toprule
-    mode & n & mean s & stddev s & min s & max s \\
+    mode & n & mean [s] & min [s] & max [s] \\
     \midrule
-    standalone & 5 & 9.486 & 0.018 & 9.465 & 9.508 \\
-    cluster & 5 & 14.065 & 0.231 & 13.657 & 14.188 \\
+    standalone & 5 & 9.486 & 9.465 & 9.508 \\
+    cluster & 5 & 14.065 & 13.657 & 14.188 \\
     \bottomrule
   \end{tabular}
 \end{frame}
 
-\begin{frame}[fragile]{Rezultati: Show}
+\begin{frame}[fragile]{Rezultati 1GB: Show}
   Kampanja: \code{campaign\_20260226T102453Z\_show}
 
   \scriptsize
@@ -327,66 +329,218 @@ show --year 2018 --month 7 --min-speed 15 \
   \end{verbatim}
   \normalsize
 
-  \begin{tabular}{lrrrrr}
+  \begin{tabular}{lrrrr}
     \toprule
-    mode & n & mean s & stddev s & min s & max s \\
+    mode & n & mean [s] & min [s] & max [s] \\
     \midrule
-    standalone & 5 & 10.490 & 0.031 & 10.445 & 10.513 \\
-    cluster & 5 & 14.309 & 0.220 & 14.167 & 14.697 \\
+    standalone & 5 & 10.490 & 10.445 & 10.513 \\
+    cluster & 5 & 14.309 & 14.167 & 14.697 \\
     \bottomrule
   \end{tabular}
 \end{frame}
 
-\begin{frame}{Poređenje cluster vs standalone}
-  Cluster/standalone odnos (mean):
+\begin{frame}{Poređenje: 1GB benchmark}
+  Cluster/standalone odnos za \textbf{manji} skup:
 
   \vspace{0.25cm}
-  \begin{tabular}{lrr}
+  \scriptsize
+  \begin{tabular}{lrrrr}
     \toprule
-    benchmark & ratio & delta (s) \\
+    benchmark & standalone mean [s] & cluster mean [s] & ratio & delta [s] \\
     \midrule
-    stats speed & 1.397x & +4.395 \\
-    stats heading, course & 1.443x & +4.937 \\
-    count dec2018 & 1.483x & +4.579 \\
-    show fast jul2018 & 1.364x & +3.819 \\
+    stats speed & 11.049 & 15.444 & 1.397x & +4.395 \\
+    stats heading, course & 11.132 & 16.069 & 1.443x & +4.937 \\
+    count dec2018 & 9.486 & 14.065 & 1.483x & +4.579 \\
+    show fast jul2018 & 10.490 & 14.309 & 1.364x & +3.819 \\
+    \bottomrule
+  \end{tabular}
+  \normalsize
+
+  \vspace{0.3cm}
+  Raw: \code{971.54 MiB}, processed parquet: \code{191.60 MiB}, clean rows: \code{8.30M}
+\end{frame}
+
+\begin{frame}[fragile]{Rezultati 5GB: Stats (speed)}
+  Kampanja: \code{campaign\_20260627T140125Z\_5gb\_stats\_speed}
+
+  \scriptsize
+  \begin{verbatim}
+stats --year 2018 --group-by month --metrics speed \
+  --order-by month --limit 12
+  \end{verbatim}
+  \normalsize
+
+  \begin{tabular}{lrrrr}
+    \toprule
+    mode & n & mean [s] & min [s] & max [s] \\
+    \midrule
+    standalone & 5 & 12.882 & 12.379 & 13.497 \\
+    cluster & 5 & 17.692 & 17.021 & 18.185 \\
+    \bottomrule
+  \end{tabular}
+
+\end{frame}
+
+\begin{frame}[fragile]{Rezultati 5GB: Stats (heading, course)}
+  Kampanja: \code{campaign\_20260627T140416Z\_5gb\_stats\_heading\_course}
+
+  \scriptsize
+  \begin{verbatim}
+stats --year 2018 --group-by month --metrics heading,course \
+  --order-by month --limit 12
+  \end{verbatim}
+  \normalsize
+
+  \begin{tabular}{lrrrr}
+    \toprule
+    mode & n & mean [s] & min [s] & max [s] \\
+    \midrule
+    standalone & 5 & 14.551 & 14.493 & 14.612 \\
+    cluster & 5 & 19.803 & 19.196 & 20.193 \\
+    \bottomrule
+  \end{tabular}
+
+\end{frame}
+
+\begin{frame}[fragile]{Rezultati 5GB: Count}
+  Kampanja: \code{campaign\_20260627T140724Z\_5gb\_count}
+
+  \begin{verbatim}
+count --year 2018 --month 12
+  \end{verbatim}
+
+  \begin{tabular}{lrrrr}
+    \toprule
+    mode & n & mean [s] & min [s] & max [s] \\
+    \midrule
+    standalone & 5 & 11.010 & 10.967 & 11.047 \\
+    cluster & 5 & 15.795 & 15.666 & 16.215 \\
     \bottomrule
   \end{tabular}
 \end{frame}
 
-\begin{frame}{Analiza rezultata}
-  Zaključci za trenutni obim (\textasciitilde 1GB raw, \textasciitilde 192MB parquet):
+\begin{frame}[fragile]{Rezultati 5GB: Show}
+  Kampanja: \code{campaign\_20260627T140955Z\_5gb\_show}
+
+  \scriptsize
+  \begin{verbatim}
+show --year 2018 --month 7 --min-speed 15 \
+  --sort-by timestamp --sort-desc --limit 20
+  \end{verbatim}
+  \normalsize
+
+  \begin{tabular}{lrrrr}
+    \toprule
+    mode & n & mean [s] & min [s] & max [s] \\
+    \midrule
+    standalone & 5 & 12.035 & 12.004 & 12.052 \\
+    cluster & 5 & 16.529 & 16.153 & 16.815 \\
+    \bottomrule
+  \end{tabular}
+\end{frame}
+
+\begin{frame}{Rezultati: \textasciitilde 5GB benchmark}
   \begin{itemize}
-    \item \code{local[*]} je brži u svim testovima.
-    \item Cluster overhead dominira nad dobitkom paralelizacije na ovom obimu podataka.
-    \item Stabilnost merenja zavisi od upita: \code{count} i \code{show} su stabilniji, dok \code{stats} ima veću varijansu.
+    \item Ulazni skup podataka je proširen dodatnim podskupovima grupisanim po mesecima.
+    \item Cluster/standalone odnos za \textbf{veći} skup:
   \end{itemize}
 
-  \vspace{0.35cm}
-  Implikacija:
+  \vspace{0.5cm}
+  \scriptsize
+  \begin{tabular}{lrrrr}
+    \toprule
+    benchmark & standalone mean [s] & cluster mean [s] & ratio & delta [s] \\
+    \midrule
+    stats speed & 12.882 & 17.692 & 1.373x & +4.810 \\
+    stats heading, course & 14.551 & 19.803 & 1.361x & +5.252 \\
+    count dec2018 & 11.010 & 15.795 & 1.435x & +4.785 \\
+    show fast jul2018 & 12.035 & 16.529 & 1.373x & +4.494 \\
+    \bottomrule
+  \end{tabular}
+  \normalsize
+
+  \vspace{0.3cm}
+  Raw: \code{4.60 GiB}, processed parquet: \code{812.68 MiB}, clean rows: \code{40.29M}
+\end{frame}
+
+\begin{frame}{Skaliranje: 1GB prema 5GB}
+  Poređenje srednjih vremena izvršavanja:
+
+  \vspace{0.15cm}
+  \scriptsize
+  \begin{tabular}{lrrrr}
+    \toprule
+    benchmark & 1GB standalone & 1GB cluster & 5GB standalone & 5GB cluster \\
+    \midrule
+    stats speed & 11.049 & 15.444 & 12.882 & 17.692 \\
+    stats heading, course & 11.132 & 16.069 & 14.551 & 19.803 \\
+    count dec2018 & 9.486 & 14.065 & 11.010 & 15.795 \\
+    show fast jul2018 & 10.490 & 14.309 & 12.035 & 16.529 \\
+    \bottomrule
+  \end{tabular}
+  \normalsize
+
+  \vspace{0.3cm}
+  Odnos veličina:
   \begin{itemize}
-    \item Za dokaz da cluster postaje bolji, potrebno je povećati ulaz i/ili težinu transformacija.
+    \item raw: \code{971.54 MiB} prema \code{4.60 GiB} (\textasciitilde 4.85x)
+    \item parquet: \code{191.60 MiB} prema \code{812.68 MiB} (\textasciitilde 4.24x)
   \end{itemize}
+\end{frame}
+
+\begin{frame}{Analiza: manji benchmark}
+  Zaključci za manji obim (\textasciitilde 1GB raw, \textasciitilde 192MB parquet):
+  \begin{itemize}
+    \item \code{local[*]} je brži u svim testovima.
+    \item Upiti su kratki i latency-bound: skeniranje parquet-a, filtriranje i male agregacije.
+    \item Cluster dodaje overhead: scheduling, driver/executor komunikaciju i serijalizaciju (Docker mreža).
+    \item \code{count} i \code{show} su stabilniji zbog jednostavnosti; \code{stats} ima više varijanse zbog grupisanja i agregacija.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Analiza: veći benchmark}
+  Rezultat je očekivan u odnosu na manji benchmark:
+  \begin{itemize}
+    \item Cluster je i dalje sporiji, a delta ostaje oko \code{+4.5s} do \code{+5.3s}.
+    \item Odnos vremena se nije bitno promenio: \code{1.36x} do \code{1.44x}.
+    \item Veći ulaz povećava vreme, \textasciitilde linearno sa veličinom ulaznog skupa (parquet format).
+    \item Fiksni Spark overhead još uvek dominira nad dobicima zbog paralelizacije.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Zašto cluster nema bolje performanse?}
+  Infrastruktura:
+  \begin{itemize}
+    \item Cluster radi na istom fizičkom hostu, sa ograničenim brojem worker-a.
+    \item HDFS ima jedan datanode, pa nema prave distribuirane data locality prednosti.
+    \item Worker-i i Spark master komuniciraju preko Docker mreže.
+    \item Testirani upiti nisu dovoljno teški da amortizuju cenu distribuiranog izvršavanja.
+  \end{itemize}
+
+  \vspace{0.3cm}
+  Najveći efekat skaliranja se video u preprocessing fazi: čitanje \code{4.60 GiB} raw CSV-a,
+  validacija \code{40.29M} redova i upis u storage sistem (HDFS).
 \end{frame}
 
 \begin{frame}{Ograničenja i sledeći koraci}
-  Ograničenja trenutnog eksperimenta:
+  Ograničenja eksperimenta:
   \begin{itemize}
-    \item jedan obim podataka (\textasciitilde 1GB raw)
-    \item jedan host i ograničeni worker resursi
-    \item fokus na latency, ne na throughput pod konkurentnim opterećenjem
+    \item dva obima podataka, ali jedan host i jedan datanode
+    \item meren je latency pojedinačnih batch upita, ne throughput pod konkurentnim opterećenjem
+    \item workload koristi relativno jednostavne filtre, sortiranje i agregacije
   \end{itemize}
 
-  \vspace{0.35cm}
-  Sledeće:
-  \begin{enumerate}
-    \item benchmark na većim obimima podataka (npr. 5GB+ raw)
-    \item podešavanje Spark parametara
-    \item finalna vizuelna analiza pomoću \code{aggregate.csv}
-  \end{enumerate}
+  \vspace{0.3cm}
+  Za očekivanu cluster prednost može se testirati:
+  \begin{itemize}
+    \item više datanode/worker čvorova
+    \item veći procesirani skup i teže operacije
+    \item Promena Spark cluster konfiguracije: executor memorija i broj executor-a
+  \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Reproducibilnost}
-  Reference komande:
+\begin{frame}[fragile]{Ponavljanje eksperimenta -- referenca}
+
   \begin{verbatim}
 # HDFS + preprocess baseline
 bash automation/phase2_preprocessing.sh
@@ -394,6 +548,9 @@ bash automation/phase2_preprocessing.sh
 # jedna benchmark kampanja
 python3 scripts/benchmark_ais_analytics.py ...
 python3 scripts/aggregate_benchmark_runs.py ...
+
+# 5GB benchmark sa cleanup-om
+bash automation/phase5_5gb_benchmarks.sh
   \end{verbatim}
 
   Sve kampanje i izveštaji su timestamped i append-only.
