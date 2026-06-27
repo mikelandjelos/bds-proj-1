@@ -1,8 +1,11 @@
 # bds-proj-1
 
-Autor: `Mihajlo Madic 2119`
+- Student: `Mihajlo Madic 2119`
+- Prezentacija:
+  - PDF - [presentation.pdf](./docs/presentation/presentation.pdf);
+  - Izvorni kod prezentacije (TeX) - [presentation.tex](./docs/presentation/presentation.tex).
 
-Uradjeno:
+Sadržaj projekta:
 
 - Docker-first 3-slojna arhitektura: HDFS + Spark + App.
 - Upload sirovih AIS podataka na HDFS i verifikacija.
@@ -10,24 +13,3 @@ Uradjeno:
 - Spark analytics CLI (`count`, `show`, `stats` sa `min/max/avg/stddev`).
 - Benchmark kampanje za `local[*]` i cluster mode + agregacija rezultata.
 - Reproducibility checkpoint skripte: `phase1_hdfs_upload.sh`, `phase2_preprocessing.sh`, `phase3_analytics_cli.sh`, `phase4_full_benchmarks.sh`.
-
-Prezentacija:
-
-- [presentation.pdf](presentation.pdf)
-- [docs/presentation.tex](docs/presentation.tex)
-
----
-
-Completed:
-
-- Docker-first 3-layer architecture: HDFS + Spark + App.
-- Raw AIS upload to HDFS with verification.
-- Preprocessing to Parquet (`clean`, `quarantine`, `quality_report`) on HDFS.
-- Spark analytics CLI (`count`, `show`, `stats` with `min/max/avg/stddev`).
-- Benchmark campaigns for `local[*]` and cluster mode + aggregated reporting.
-- Reproducibility checkpoint scripts: `phase1_hdfs_upload.sh`, `phase2_preprocessing.sh`, `phase3_analytics_cli.sh`, `phase4_full_benchmarks.sh`.
-
-Presentation:
-
-- [presentation.pdf](presentation.pdf)
-- [docs/presentation.tex](docs/presentation.tex)
